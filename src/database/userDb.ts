@@ -1,6 +1,10 @@
 import DatabaseError from 'src/database/errorDb';
-import Validator from 'src/validator/validator';
-import { CreateUserDto, IFilterOptions, UpdatePasswordDto, User } from 'types/types';
+import {
+  CreateUserDto,
+  IFilterOptions,
+  UpdatePasswordDto,
+  User,
+} from 'types/types';
 import { v4 as uuidv4 } from 'uuid';
 
 class UserDb {
@@ -40,7 +44,7 @@ class UserDb {
       version: 0,
       createdAt: Date.now(),
       updatedAt: Date.now(),
-    }
+    };
     this.db.push(newCommer);
     return newCommer;
   }

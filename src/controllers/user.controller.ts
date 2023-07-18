@@ -1,10 +1,19 @@
-import { Body, Controller, Delete, Get, HttpCode, Param, Post, Put } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  HttpCode,
+  Param,
+  Post,
+  Put,
+} from '@nestjs/common';
 import { UserService } from '../service/user.service';
 import { CreateUserDto, UpdatePasswordDto } from 'types/types';
 
 @Controller('user')
 export class UserController {
-  constructor(private readonly UserService: UserService) { }
+  constructor(private readonly UserService: UserService) {}
 
   @Get()
   getUsers() {
@@ -23,7 +32,10 @@ export class UserController {
   }
 
   @Put(':userId')
-  update(@Param('userId') userId: string, @Body() updatePasswordDto: UpdatePasswordDto) {
+  update(
+    @Param('userId') userId: string,
+    @Body() updatePasswordDto: UpdatePasswordDto,
+  ) {
     return this.UserService.updatePassword(userId, updatePasswordDto);
   }
 
