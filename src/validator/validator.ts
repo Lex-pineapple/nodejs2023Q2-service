@@ -9,7 +9,7 @@ class Validator {
         return valid;
     }
 
-    validateUserCreate(data: unknown): boolean {
+    validateUserCreate(data: any): boolean {
         if (data instanceof Object) {
             if (!('login' in data && typeof data.login === 'string')) throw new DatabaseError(3);
             if (!('password' in data && typeof data.password === 'string')) throw new DatabaseError(3);
@@ -17,7 +17,7 @@ class Validator {
         } else throw new DatabaseError(3);
     }
 
-    validateUserUpdate(data: unknown): boolean {
+    validateUserUpdate(data: any): boolean {
         if (data instanceof Object) {
             if (!('oldPassword' in data && typeof data.oldPassword === 'string')) throw new DatabaseError(3);
             if (!('newPassword' in data && typeof data.newPassword === 'string')) throw new DatabaseError(3);
