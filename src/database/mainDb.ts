@@ -1,4 +1,5 @@
 import UserDb from 'src/database/userDb';
+import Validator from 'src/validator/validator';
 import { Album, Artist, Favorites, Track } from 'types/types';
 
 class Database {
@@ -7,7 +8,9 @@ class Database {
   track: Track[];
   album: Album[];
   favorite: Favorites[];
+  validator: Validator;
   constructor() {
+    this.validator = new Validator();
     this.user = new UserDb();
     // this.artisDb = [];
     // this.trackDb = [];
@@ -15,11 +18,7 @@ class Database {
     // this.favDb = [];
   }
 
-  validateId(id: string) {
-    const uuidRegExp =
-      /^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$/gi;
-    return uuidRegExp.test(id);
-  }
+
 }
 
 export default Database;

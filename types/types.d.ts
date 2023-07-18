@@ -34,6 +34,16 @@ export interface Favorites {
   tracks: string[]; // favorite tracks ids
 }
 
+export interface CreateUserDto {
+  login: string;
+  password: string;
+}
+
+export interface UpdatePasswordDto {
+  oldPassword: string;
+  newPassword: string;
+}
+
 export interface IFilterOptions {
   where:
     | Partial<User>
