@@ -1,8 +1,11 @@
-const errorDb =  {
+const validationErrors = {
   1: 'UUID is invalid',
-  2: 'Record with this ID doies not exist',
   3: 'Body does not contain required fields',
+}
+
+const databaseErrors = {
+  2: 'Record with this ID doies not exist',
   101: 'Old password is incorrect',
 }
 
-export default errorDb;
+export { validationErrors, databaseErrors };

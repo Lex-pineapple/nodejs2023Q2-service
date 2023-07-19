@@ -1,9 +1,9 @@
-import errorDb from './errorDb';
+import { databaseErrors } from './errorDb';
 
 class DatabaseError extends Error {
   code: number;
   constructor(code: number) {
-    super(errorDb[code as keyof typeof errorDb]);
+    super(databaseErrors[code as keyof typeof databaseErrors]);
     this.code = code;
   }
 }

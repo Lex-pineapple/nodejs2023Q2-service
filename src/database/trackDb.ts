@@ -1,6 +1,6 @@
 import { IFilterOptions, Track } from 'types/types';
 
-class TrackDb {
+export class TrackDb {
   db: Track[];
   constructor() {
     this.db = [];
@@ -21,5 +21,3 @@ class TrackDb {
     return this.db;
   }
 }
-
-export default TrackDb;

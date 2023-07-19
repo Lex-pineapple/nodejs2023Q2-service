@@ -1,9 +1,9 @@
-import errorDb from './errorDb';
+import { validationErrors } from './errorDb';
 
 export class ValidationError extends Error {
   code: number;
   constructor(code: number) {
-    super(errorDb[code as keyof typeof errorDb]);
+    super(validationErrors[code as keyof typeof validationErrors]);
     this.code = code;
   }
 }

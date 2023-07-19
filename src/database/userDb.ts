@@ -1,4 +1,4 @@
-import DatabaseError from 'src/database/errorDb';
+import DatabaseError from 'src/errors/database.error';
 import {
   CreateUserDto,
   IFilterOptions,
@@ -7,7 +7,7 @@ import {
 } from 'types/types';
 import { v4 as uuidv4 } from 'uuid';
 
-class UserDb {
+export class UserDb {
   db: User[];
   constructor() {
     this.db = [];
@@ -74,5 +74,3 @@ class UserDb {
     }
   }
 }
-
-export default UserDb;
