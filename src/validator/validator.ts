@@ -1,10 +1,15 @@
+import { ArtistValidator } from "src/validator/artist.validator";
 import { TrackValidator } from "./track.validator";
 import { UserValidator } from "./user.validator";
 import { ValidationError } from "src/errors/validation.error";
+import { AlbumValidator } from "src/validator/album.validator";
 
 class Validator {
   public static user: UserValidator = new UserValidator();
   public static track: TrackValidator = new TrackValidator();
+  public static artist: ArtistValidator = new ArtistValidator();
+  public static album: AlbumValidator = new AlbumValidator();
+
 
   static validateUUID(id: string): true | ValidationError {
     const uuidRegExp =
