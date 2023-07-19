@@ -20,9 +20,9 @@ export class UserController {
     return this.UserService.getUsers();
   }
 
-  @Get(':userId')
-  getUser(@Param('userId') userId: string) {
-    return this.UserService.getUser(userId);
+  @Get(':id')
+  getUser(@Param('id') id: string) {
+    return this.UserService.getUser(id);
   }
 
   @Post()
@@ -31,17 +31,17 @@ export class UserController {
     return this.UserService.createUser(createUserDto);
   }
 
-  @Put(':userId')
+  @Put(':id')
   update(
-    @Param('userId') userId: string,
+    @Param('id') id: string,
     @Body() updatePasswordDto: UpdatePasswordDto,
   ) {
-    return this.UserService.updatePassword(userId, updatePasswordDto);
+    return this.UserService.updatePassword(id, updatePasswordDto);
   }
 
-  @Delete(':userId')
+  @Delete(':id')
   @HttpCode(204)
-  delete(@Param('userId') userId: string) {
-    return this.UserService.deleteUser(userId);
+  delete(@Param('id') id: string) {
+    return this.UserService.deleteUser(id);
   }
 }

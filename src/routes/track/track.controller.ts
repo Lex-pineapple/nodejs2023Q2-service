@@ -9,4 +9,6 @@ export class TrackController {
   getTracks() {
     return this.TrackService.getTracks();
   }
+
+  @Get(':id')
 }
