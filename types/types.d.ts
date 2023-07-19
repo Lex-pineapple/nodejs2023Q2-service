@@ -44,11 +44,47 @@ export interface UpdatePasswordDto {
   newPassword: string;
 }
 
+export interface CreateTrackDto {
+  name: string;
+  artistId: string | null; // refers to Artist
+  albumId: string | null; // refers to Album
+  duration: number;
+}
+
+export interface UpdateTrackDto {
+  name: string;
+  artistId: string | null; // refers to Artist
+  albumId: string | null; // refers to Album
+  duration: number;
+}
+
+export interface CreateArtistDto {
+  name: string;
+  grammy: boolean;
+}
+
+export interface UpdateArtistDto {
+  name: string;
+  grammy: boolean;
+}
+
+export interface CreateAlbumDto {
+  name: string;
+  year: number;
+  artistId: string | null;
+}
+
+export interface updateAlbumDto {
+  name: string;
+  year: number;
+  artistId: string | null;
+}
+
 export interface IFilterOptions {
   where:
-    | Partial<User>
-    | Partial<Artist>
-    | Partial<Track>
-    | Partial<Album>
-    | Partial<Favorites>;
+  | Partial<User>
+  | Partial<Artist>
+  | Partial<Track>
+  | Partial<Album>
+  | Partial<Favorites>;
 }

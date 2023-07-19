@@ -1,29 +1,24 @@
-import DatabaseError from "src/database/errorDb";
+import { TrackValidator } from "./track.validator";
+import { UserValidator } from "./user.validator";
+import { ValidationError } from "src/errors/validation.error";
 
 class Validator {
-    validateUUID(id: string): true | DatabaseError {
-        const uuidRegExp =
-            /^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$/gi;
-        const valid = uuidRegExp.test(id);
-        if (!valid) throw new DatabaseError(1);
-        return valid;
-    }
+  public static user: UserValidator = new UserValidator();
+  public static track: TrackValidator = new TrackValidator();
 
-    validateUserCreate(data: any): boolean {
-        if (data instanceof Object) {
-            if (!('login' in data && typeof data.login === 'string')) throw new DatabaseError(3);
-            if (!('password' in data && typeof data.password === 'string')) throw new DatabaseError(3);
-            return true;
-        } else throw new DatabaseError(3);
-    }
+  static validateUUID(id: string): true | ValidationError {
+    const uuidRegExp =
+      /^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$/gi;
+    const valid = uuidRegExp.test(id);
+    if (!valid) throw new ValidationError(1);
+    return valid;
+  }
 
-    validateUserUpdate(data: any): boolean {
-        if (data instanceof Object) {
-            if (!('oldPassword' in data && typeof data.oldPassword === 'string')) throw new DatabaseError(3);
-            if (!('newPassword' in data && typeof data.newPassword === 'string')) throw new DatabaseError(3);
-            return true;
-        } else throw new DatabaseError(3);
-    }
+  static validateDtoFields(data: any, schema) {
+    return Object.keys(schema)
+      .filter((key) => !schema[key](data[key]))
+      .map((key) => { throw new ValidationError(3) })
+  }
 }
 
 export default Validator;

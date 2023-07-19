@@ -3,8 +3,10 @@ import {
   NotFoundException,
   ForbiddenException,
 } from '@nestjs/common';
-import DatabaseError from 'src/database/errorDb';
 import Database from 'src/database/shared';
+import DatabaseError from 'src/errors/database.error';
+import { ValidationError } from 'src/errors/validation.error';
+import Validator from 'src/validator/validator';
 import { CreateUserDto, UpdatePasswordDto } from 'types/types';
 
 export class UserService {
@@ -14,43 +16,43 @@ export class UserService {
 
   getUser(userId: string) {
     try {
-      Database.validator.validateUUID(userId);
+      Validator.validateUUID(userId);
       const user = Database.user.findUnique({
         where: {
           id: userId,
         },
       });
     } catch (error) {
-      if (error instanceof DatabaseError)
+      if (error instanceof DatabaseError || error instanceof ValidationError)
         this.handleExceptions(error.code, error.message);
     }
   }
 
   createUser(createUserDto: CreateUserDto) {
     try {
-      Database.validator.validateUserCreate(createUserDto);
+      Validator.validateDtoFields(createUserDto, Validator.user.schemaCreate);
       const user = Database.user.create(createUserDto);
       return user;
     } catch (error) {
-      if (error instanceof DatabaseError)
+      if (error instanceof DatabaseError || error instanceof ValidationError)
         this.handleExceptions(error.code, error.message);
     }
   }
 
   updatePassword(userId: string, updatePasswordDto: UpdatePasswordDto) {
     try {
-      Database.validator.validateUUID(userId);
-      Database.validator.validateUserUpdate(updatePasswordDto);
+      Validator.validateUUID(userId);
+      Validator.validateDtoFields(updatePasswordDto, Validator.user.schemaUpdate);
       Database.user.update(userId, updatePasswordDto);
     } catch (error) {
-      if (error instanceof DatabaseError)
+      if (error instanceof DatabaseError || error instanceof ValidationError)
         this.handleExceptions(error.code, error.message);
     }
   }
 
   deleteUser(userId: string) {
     try {
-      Database.validator.validateUUID(userId);
+      Validator.validateUUID(userId);
       Database.user.delete(userId);
     } catch (error) {
       if (error instanceof DatabaseError)
