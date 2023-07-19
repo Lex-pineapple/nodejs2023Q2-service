@@ -1,10 +1,19 @@
-import { Body, Controller, Delete, Get, HttpCode, Param, Post, Put } from "@nestjs/common";
-import { AlbumService } from "src/routes/album/album.service";
-import { CreateAlbumDto, updateAlbumDto } from "types/types";
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  HttpCode,
+  Param,
+  Post,
+  Put,
+} from '@nestjs/common';
+import { AlbumService } from 'src/routes/album/album.service';
+import { CreateAlbumDto, updateAlbumDto } from 'types/types';
 
 @Controller('album')
 export class AlbumController {
-  constructor(private readonly AlbumService: AlbumService) { }
+  constructor(private readonly AlbumService: AlbumService) {}
 
   @Get()
   getAlbums() {

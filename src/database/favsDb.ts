@@ -1,4 +1,4 @@
-import { Favorites } from "types/types";
+import { Favorites } from 'types/types';
 
 export class FavsDb {
   db: Favorites;
@@ -6,7 +6,7 @@ export class FavsDb {
     this.db = {
       artists: [],
       albums: [],
-      tracks: []
+      tracks: [],
     };
   }
 }

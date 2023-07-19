@@ -1,29 +1,15 @@
 export class FavoritesService {
-  getFavs() {
+  getFavs() {}
 
-  }
+  addTrack(trackId: string) {}
 
-  addTrack(trackId: string) {
+  deleteTrack(trackId: string) {}
 
-  }
+  addAlbum(albumId: string) {}
 
-  deleteTrack(trackId: string) {
+  deleteAlbum(albumId: string) {}
 
-  }
+  addArtist(artistId: string) {}
 
-  addAlbum(albumId: string) {
-
-  }
-
-  deleteAlbum(albumId: string) {
-
-  }
-
-  addArtist(artistId: string) {
-
-  }
-
-  deleteArtist(artistId: string) {
-    
-  }
+  deleteArtist(artistId: string) {}
 }

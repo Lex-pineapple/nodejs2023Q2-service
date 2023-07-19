@@ -1,23 +1,13 @@
-import { CreateAlbumDto, updateAlbumDto } from "types/types";
+import { CreateAlbumDto, updateAlbumDto } from 'types/types';
 
 export class AlbumService {
-  getAlbums() {
+  getAlbums() {}
 
-  }
+  getAlbum(id: string) {}
 
-  getAlbum(id: string) {
+  createAlbum(createAlbumDto: CreateAlbumDto) {}
 
-  }
+  updateAlbum(id: string, updateAlbumDto: updateAlbumDto) {}
 
-  createAlbum(createAlbumDto: CreateAlbumDto) {
-
-  }
-
-  updateAlbum(id: string, updateAlbumDto: updateAlbumDto) {
-
-  }
-
-  deleteAlbum(id: string) {
-    
-  }
+  deleteAlbum(id: string) {}
 }

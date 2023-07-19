@@ -42,7 +42,10 @@ export class UserService {
   updatePassword(userId: string, updatePasswordDto: UpdatePasswordDto) {
     try {
       Validator.validateUUID(userId);
-      Validator.validateDtoFields(updatePasswordDto, Validator.user.schemaUpdate);
+      Validator.validateDtoFields(
+        updatePasswordDto,
+        Validator.user.schemaUpdate,
+      );
       Database.user.update(userId, updatePasswordDto);
     } catch (error) {
       if (error instanceof DatabaseError || error instanceof ValidationError)

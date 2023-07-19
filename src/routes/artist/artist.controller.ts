@@ -1,10 +1,19 @@
-import { Body, Controller, Delete, Get, HttpCode, Param, Post, Put } from "@nestjs/common";
-import { ArtistService } from "src/routes/artist/artist.service";
-import { CreateArtistDto, UpdateArtistDto } from "types/types";
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  HttpCode,
+  Param,
+  Post,
+  Put,
+} from '@nestjs/common';
+import { ArtistService } from 'src/routes/artist/artist.service';
+import { CreateArtistDto, UpdateArtistDto } from 'types/types';
 
 @Controller('artist')
 export class ArtistController {
-  constructor(private readonly ArtistService: ArtistService) { }
+  constructor(private readonly ArtistService: ArtistService) {}
 
   @Get()
   getArtists() {

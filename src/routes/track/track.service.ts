@@ -6,20 +6,13 @@ export class TrackService {
     return Database.track.findMany();
   }
 
-  getTrack(id: string) {
+  getTrack(id: string) {}
 
-  }
+  createTrack(createTrackDto: CreateTrackDto) {}
 
-  createTrack(createTrackDto: CreateTrackDto) {
+  updateTrack(id: string, updateTrackDto: UpdateTrackDto) {}
 
-  }
-
-  updateTrack(id: string, updateTrackDto: UpdateTrackDto) {
-
-  }
-
-  deleteTrack(id: string) {
-  }
+  deleteTrack(id: string) {}
 }
 
 export default TrackService;

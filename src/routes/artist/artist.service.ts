@@ -1,23 +1,13 @@
-import { CreateArtistDto, UpdateArtistDto } from "types/types";
+import { CreateArtistDto, UpdateArtistDto } from 'types/types';
 
 export class ArtistService {
-  getArtists() {
+  getArtists() {}
 
-  }
+  getArtist(id: string) {}
 
-  getArtist(id: string) {
+  createArtist(createArtistDto: CreateArtistDto) {}
 
-  }
+  updateArtist(updateArtistDto: UpdateArtistDto) {}
 
-  createArtist(createArtistDto: CreateArtistDto) {
-
-  }
-
-  updateArtist(updateArtistDto: UpdateArtistDto) {
-
-  }
-
-  deleteArtist(id: string) {
-
-  }
+  deleteArtist(id: string) {}
 }
