@@ -8,12 +8,12 @@ import {
   Post,
   Put,
 } from '@nestjs/common';
-import { UserService } from '../service/user.service';
+import { UserService } from './user.service';
 import { CreateUserDto, UpdatePasswordDto } from 'types/types';
 
 @Controller('user')
 export class UserController {
-  constructor(private readonly UserService: UserService) {}
+  constructor(private readonly UserService: UserService) { }
 
   @Get()
   getUsers() {

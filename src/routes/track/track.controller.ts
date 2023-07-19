@@ -1,9 +1,9 @@
 import { Controller, Get } from '@nestjs/common';
-import TrackService from 'src/service/track.service';
+import TrackService from './track.service';
 
 @Controller('track')
 export class TrackController {
-  constructor(private readonly TrackService: TrackService) {}
+  constructor(private readonly TrackService: TrackService) { }
 
   @Get()
   getTracks() {
