@@ -65,6 +65,8 @@ export class ArtistService {
       albums.forEach((album) => {
         Database.album.update(album.id, { artistId: null });
       });
+      // Update favs db
+      Database.favorite.deleteFavorite(id, 'artists');
     } catch (error) {
       this.handleExceptions(error);
     }

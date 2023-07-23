@@ -51,6 +51,7 @@ export class TrackService {
     try {
       Validator.validateUUID(id);
       Database.track.delete(id);
+      Database.favorite.deleteFavorite(id, 'tracks');
     } catch (error) {
       this.handleExceptions(error);
     }
@@ -62,10 +63,13 @@ export class TrackService {
         throw new BadRequestException(error.message);
       if (error.code === 2) throw new NotFoundException(error.message);
       if (error.code === 101) throw new ForbiddenException(error.message);
-    } else
+    } else {
+      console.log(error);
+
       throw new InternalServerErrorException(
         'Whoops... There was a server error!',
       );
+    }
   }
 }
 
