@@ -22,9 +22,9 @@ export class UserService {
           id: userId,
         },
       });
+      return user;
     } catch (error) {
-      if (error instanceof DatabaseError || error instanceof ValidationError)
-        this.handleExceptions(error.code, error.message);
+      this.handleExceptions(error);
     }
   }
 
@@ -34,8 +34,7 @@ export class UserService {
       const user = Database.user.create(createUserDto);
       return user;
     } catch (error) {
-      if (error instanceof DatabaseError || error instanceof ValidationError)
-        this.handleExceptions(error.code, error.message);
+      this.handleExceptions(error);
     }
   }
 
@@ -46,10 +45,9 @@ export class UserService {
         updatePasswordDto,
         Validator.user.schemaUpdate,
       );
-      Database.user.update(userId, updatePasswordDto);
+      return Database.user.update(userId, updatePasswordDto);
     } catch (error) {
-      if (error instanceof DatabaseError || error instanceof ValidationError)
-        this.handleExceptions(error.code, error.message);
+      this.handleExceptions(error);
     }
   }
 
@@ -58,14 +56,16 @@ export class UserService {
       Validator.validateUUID(userId);
       Database.user.delete(userId);
     } catch (error) {
-      if (error instanceof DatabaseError)
-        this.handleExceptions(error.code, error.message);
+      this.handleExceptions(error);
     }
   }
 
-  handleExceptions(code: number, message: string) {
-    if (code === 1 || code === 3) throw new BadRequestException(message);
-    if (code === 2) throw new NotFoundException(message);
-    if (code === 101) throw new ForbiddenException(message);
+  handleExceptions(error: any) {
+    if (error instanceof DatabaseError || error instanceof ValidationError) {
+      if (error.code === 1 || error.code === 3)
+        throw new BadRequestException(error.message);
+      if (error.code === 2) throw new NotFoundException(error.message);
+      if (error.code === 101) throw new ForbiddenException(error.message);
+    }
   }
 }
