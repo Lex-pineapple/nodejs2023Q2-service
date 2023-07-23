@@ -15,15 +15,15 @@ export class UserDb {
 
   findUnique(filterOprions: IFilterOptions) {
     const filterFields = Object.entries(filterOprions.where);
-    const user = this.db.find((record) => {
+    const foundRecord = this.db.find((record) => {
       const retval = filterFields.reduce((acc, curr) => {
         const [key, value] = curr;
         return record[key] === value ? acc + 1 : acc;
       }, 0);
       return retval === filterFields.length ? 1 : 0;
     });
-    if (!user) throw new DatabaseError(2);
-    return user;
+    if (!foundRecord) throw new DatabaseError(2);
+    return foundRecord;
   }
 
   findMany(filterOprions?: IFilterOptions) {

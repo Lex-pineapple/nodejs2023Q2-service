@@ -2,6 +2,7 @@ import {
   BadRequestException,
   NotFoundException,
   ForbiddenException,
+  InternalServerErrorException,
 } from '@nestjs/common';
 import Database from 'src/database/shared';
 import DatabaseError from 'src/errors/database.error';
@@ -66,6 +67,9 @@ export class UserService {
         throw new BadRequestException(error.message);
       if (error.code === 2) throw new NotFoundException(error.message);
       if (error.code === 101) throw new ForbiddenException(error.message);
-    }
+    } else
+      throw new InternalServerErrorException(
+        'Whoops... There was a server error!',
+      );
   }
 }

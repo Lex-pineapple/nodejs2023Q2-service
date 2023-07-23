@@ -1,6 +1,9 @@
 export class ArtistValidator {
   schema = {
-    name: (value: any) => typeof value === 'string',
-    grammy: (value: any) => typeof value === 'boolean',
+    fields: {
+      name: (value: any) => typeof value === 'string',
+      grammy: (value: any) => typeof value === 'boolean',
+    },
+    required: ['name', 'grammy'],
   };
 }

@@ -46,8 +46,8 @@ export interface UpdatePasswordDto {
 
 export interface CreateTrackDto {
   name: string;
-  artistId: string | null; // refers to Artist
-  albumId: string | null; // refers to Album
+  artistId?: string; // refers to Artist
+  albumId?: string; // refers to Album
   duration: number;
 }
 
@@ -82,9 +82,9 @@ export interface updateAlbumDto {
 
 export interface IFilterOptions {
   where:
-  | Partial<User>
-  | Partial<Artist>
-  | Partial<Track>
-  | Partial<Album>
-  | Partial<Favorites>;
+    | Partial<User>
+    | Partial<Artist>
+    | Partial<Track>
+    | Partial<Album>
+    | Partial<Favorites>;
 }

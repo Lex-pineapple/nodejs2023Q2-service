@@ -1,11 +1,17 @@
 export class UserValidator {
   schemaCreate = {
-    login: (value: any) => typeof value === 'string',
-    password: (value: any) => typeof value === 'string',
+    fields: {
+      login: (value: any) => typeof value === 'string',
+      password: (value: any) => typeof value === 'string',
+    },
+    required: ['login', 'password'],
   };
 
   schemaUpdate = {
-    oldPassword: (value: any) => typeof value === 'string',
-    newPassword: (value: any) => typeof value === 'string',
+    fields: {
+      oldPassword: (value: any) => typeof value === 'string',
+      newPassword: (value: any) => typeof value === 'string',
+    },
+    required: ['oldPassword', 'newPassword'],
   };
 }

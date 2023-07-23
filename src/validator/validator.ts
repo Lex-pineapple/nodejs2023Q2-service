@@ -19,10 +19,12 @@ class Validator {
   }
 
   static validateDtoFields(data: any, schema) {
-    return Object.keys(schema)
-      .filter((key) => !schema[key](data[key]))
+    return Object.keys(schema.fields)
+      .filter((key) => {
+        return !schema.fields[key](data[key]);
+      })
       .map((key) => {
-        throw new ValidationError(3);
+        if (schema.required.includes(key)) throw new ValidationError(3);
       });
   }
 }
