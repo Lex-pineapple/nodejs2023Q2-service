@@ -71,13 +71,13 @@ export interface UpdateArtistDto {
 export interface CreateAlbumDto {
   name: string;
   year: number;
-  artistId: string | null;
+  artistId?: string;
 }
 
 export interface updateAlbumDto {
-  name: string;
-  year: number;
-  artistId: string | null;
+  name?: string;
+  year?: number;
+  artistId?: string;
 }
 
 export interface IFilterOptions {

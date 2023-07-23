@@ -56,9 +56,7 @@ export class UserDb {
 
   update(id: string, data: UpdatePasswordDto) {
     const user = this.findUnique({
-      where: {
-        id: id,
-      },
+      where: { id },
     });
     if (user.password !== data.oldPassword) throw new DatabaseError(101);
     const userIdx = this.db.indexOf(user);

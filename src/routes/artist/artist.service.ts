@@ -51,11 +51,19 @@ export class ArtistService {
     try {
       Validator.validateUUID(id);
       Database.artist.delete(id);
+      // Update track db
       const tracks = Database.track.findMany({
         where: { artistId: id },
       });
       tracks.forEach((track) => {
         Database.track.update(track.id, { artistId: null });
+      });
+      // Update album db
+      const albums = Database.album.findMany({
+        where: { artistId: id },
+      });
+      albums.forEach((album) => {
+        Database.album.update(album.id, { artistId: null });
       });
     } catch (error) {
       this.handleExceptions(error);
