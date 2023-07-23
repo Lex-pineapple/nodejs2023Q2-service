@@ -14,24 +14,28 @@ export class UserDb {
   }
 
   findUnique(filterOprions: IFilterOptions) {
-    const [key, value] = Object.entries(filterOprions.where)[0];
-    const foundRecord = this.db.find((record) => {
-      record[key as keyof User] === value;
+    const filterFields = Object.entries(filterOprions.where);
+    const user = this.db.find((record) => {
+      const retval = filterFields.reduce((acc, curr) => {
+        const [key, value] = curr;
+        return record[key] === value ? acc + 1 : acc;
+      }, 0);
+      return retval === filterFields.length ? 1 : 0;
     });
-    return foundRecord;
+    if (!user) throw new DatabaseError(2);
+    return user;
   }
 
   findMany(filterOprions?: IFilterOptions) {
     if (filterOprions) {
-      let filteredArr: User[] = [];
-      const filterFields = { ...filterOprions.where };
-      for (const [key, value] of Object.entries(filterFields)) {
-        const entries = this.db.filter((record) => {
-          record[key as keyof User] === value;
-        });
-        filteredArr = [...filteredArr, ...entries];
-      }
-      return filteredArr;
+      const filterFields = Object.entries(filterOprions.where);
+      return this.db.filter((record) => {
+        const retval = filterFields.reduce((acc, curr) => {
+          const [key, value] = curr;
+          return record[key] === value ? acc + 1 : acc;
+        }, 0);
+        return retval === filterFields.length ? 1 : 0;
+      });
     }
     return this.db;
   }
@@ -41,12 +45,13 @@ export class UserDb {
       id: uuidv4(),
       login: data.login,
       password: data.password,
-      version: 0,
+      version: 1,
       createdAt: Date.now(),
       updatedAt: Date.now(),
     };
     this.db.push(newCommer);
-    return newCommer;
+    const { password: _, ...rest } = newCommer;
+    return rest;
   }
 
   update(id: string, data: UpdatePasswordDto) {
@@ -55,10 +60,12 @@ export class UserDb {
         id: id,
       },
     });
-    if (!user) throw new DatabaseError(2);
     if (user.password !== data.oldPassword) throw new DatabaseError(101);
     user.password = data.newPassword;
-    return user;
+    user.version++;
+    user.updatedAt = Date.now();
+    const { password: _, ...rest } = user;
+    return rest;
   }
 
   delete(id: string) {
@@ -67,7 +74,6 @@ export class UserDb {
         id: id,
       },
     });
-    if (!user) throw new DatabaseError(2);
     const recordIdx = this.db.indexOf(user);
     if (recordIdx > -1) {
       this.db.splice(recordIdx, 1);
