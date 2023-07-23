@@ -33,7 +33,7 @@ export class ArtistController {
 
   @Put(':id')
   update(@Param('id') id: string, @Body() updateArtistDto: UpdateArtistDto) {
-    return this.ArtistService.updateArtist(updateArtistDto);
+    return this.ArtistService.updateArtist(id, updateArtistDto);
   }
 
   @Delete(':id')

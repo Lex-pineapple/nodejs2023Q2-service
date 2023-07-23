@@ -53,14 +53,18 @@ export class TrackDb {
   }
 
   update(id: string, data: UpdateTrackDto) {
-    let track = this.findUnique({
+    const track = this.findUnique({
       where: { id },
     });
-    track = {
-      ...track,
-      ...data,
+    const trackIdx = this.db.indexOf(track);
+    this.db[trackIdx] = {
+      id: track.id,
+      name: data.name,
+      artistId: data.artistId || null,
+      albumId: data.albumId || null,
+      duration: data.duration,
     };
-    return track;
+    return this.db[trackIdx];
   }
 
   delete(id: string) {

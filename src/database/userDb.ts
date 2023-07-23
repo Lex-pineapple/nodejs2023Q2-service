@@ -61,10 +61,14 @@ export class UserDb {
       },
     });
     if (user.password !== data.oldPassword) throw new DatabaseError(101);
-    user.password = data.newPassword;
-    user.version++;
-    user.updatedAt = Date.now();
-    const { password: _, ...rest } = user;
+    const userIdx = this.db.indexOf(user);
+    this.db[userIdx] = {
+      ...user,
+      password: data.newPassword,
+      version: user.version + 1,
+      updatedAt: Date.now(),
+    };
+    const { password: _, ...rest } = this.db[userIdx];
     return rest;
   }
 
