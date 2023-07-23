@@ -29,14 +29,32 @@ export class TrackService {
 
   createTrack(createTrackDto: CreateTrackDto) {
     try {
+      Validator.validateDtoFields(createTrackDto, Validator.track.schema);
+      const track = Database.track.create(createTrackDto);
+      return track;
     } catch (error) {
       this.handleExceptions(error);
     }
   }
 
-  updateTrack(id: string, updateTrackDto: UpdateTrackDto) {}
+  updateTrack(id: string, updateTrackDto: UpdateTrackDto) {
+    try {
+      Validator.validateUUID(id);
+      Validator.validateDtoFields(updateTrackDto, Validator.track.schema);
+      return Database.track.update(id, updateTrackDto);
+    } catch (error) {
+      this.handleExceptions(error);
+    }
+  }
 
-  deleteTrack(id: string) {}
+  deleteTrack(id: string) {
+    try {
+      Validator.validateUUID(id);
+      Database.track.delete(id);
+    } catch (error) {
+      this.handleExceptions(error);
+    }
+  }
 
   handleExceptions(error: any) {
     if (error instanceof DatabaseError || error instanceof ValidationError) {

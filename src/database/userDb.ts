@@ -75,8 +75,6 @@ export class UserDb {
       },
     });
     const recordIdx = this.db.indexOf(user);
-    if (recordIdx > -1) {
-      this.db.splice(recordIdx, 1);
-    }
+    if (recordIdx > -1) this.db.splice(recordIdx, 1);
   }
 }

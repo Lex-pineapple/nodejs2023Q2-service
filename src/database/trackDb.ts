@@ -1,5 +1,10 @@
 import DatabaseError from 'src/errors/database.error';
-import { CreateTrackDto, IFilterOptions, Track } from 'types/types';
+import {
+  CreateTrackDto,
+  IFilterOptions,
+  Track,
+  UpdateTrackDto,
+} from 'types/types';
 import { v4 as uuidv4 } from 'uuid';
 
 export class TrackDb {
@@ -39,11 +44,30 @@ export class TrackDb {
     const newTrack = {
       id: uuidv4(),
       name: data.name,
-      artistId: data.artistId && null,
-      albumId: data.albumId && null,
+      artistId: data.artistId || null,
+      albumId: data.albumId || null,
       duration: data.duration,
     };
     this.db.push(newTrack);
     return newTrack;
+  }
+
+  update(id: string, data: UpdateTrackDto) {
+    let track = this.findUnique({
+      where: { id },
+    });
+    track = {
+      ...track,
+      ...data,
+    };
+    return track;
+  }
+
+  delete(id: string) {
+    const track = this.findUnique({
+      where: { id },
+    });
+    const recordIdx = this.db.indexOf(track);
+    if (recordIdx > -1) this.db.splice(recordIdx, 1);
   }
 }
