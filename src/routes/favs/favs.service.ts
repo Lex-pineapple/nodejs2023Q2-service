@@ -17,6 +17,7 @@ export class FavoritesService {
     artists: 'artist',
     albums: 'album',
   };
+
   getFavs() {
     try {
       const favs = { ...Database.favorite.findAll() };

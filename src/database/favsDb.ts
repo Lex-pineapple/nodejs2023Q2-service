@@ -1,5 +1,5 @@
 import DatabaseError from 'src/errors/database.error';
-import { Favorites, IFilterOptions, Track } from 'types/types';
+import { Favorites } from 'types/types';
 
 export class FavsDb {
   db: Favorites;
