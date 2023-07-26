@@ -9,21 +9,30 @@ import Database from 'src/database/shared';
 import DatabaseError from 'src/errors/database.error';
 import { ValidationError } from 'src/errors/validation.error';
 import Validator from 'src/validator/validator';
+import { Album, Artist, Track } from 'types/types';
 
 export class FavoritesService {
+  keys = {
+    tracks: 'track',
+    artists: 'artist',
+    albums: 'album',
+  };
   getFavs() {
-    const favs = { ...Database.favorite.findAll() };
-    for (const key in favs) {
-      favs[key] = [
-        ...favs[key].map((item) => {
-          const dbCategory = key.slice(0, -1);
-          return Database[dbCategory].findUnique({
-            where: { id: item },
+    try {
+      const favs = { ...Database.favorite.findAll() };
+      for (const key in favs) {
+        const keyIds: Artist[] | Album[] | Track[] = [...favs[key]];
+        const mappedRecords = keyIds.map((id) => {
+          return Database[this.keys[key]].findUnique({
+            where: { id },
           });
-        }),
-      ];
+        });
+        favs[key] = [...mappedRecords];
+      }
+      return favs;
+    } catch (error) {
+      this.handleExceptions(error);
     }
-    return favs;
   }
 
   addFav(id: string, category: string) {
@@ -50,29 +59,6 @@ export class FavoritesService {
       this.handleExceptions(error);
     }
   }
-
-  addTrack(trackId: string) {
-    try {
-    } catch (error) {
-      this.handleExceptions(error);
-    }
-  }
-
-  deleteTrack(trackId: string) {
-    try {
-      Validator.validateUUID(trackId);
-    } catch (error) {
-      this.handleExceptions(error);
-    }
-  }
-
-  addAlbum(albumId: string) {}
-
-  deleteAlbum(albumId: string) {}
-
-  addArtist(artistId: string) {}
-
-  deleteArtist(artistId: string) {}
 
   handleExceptions(error: any) {
     if (error instanceof DatabaseError || error instanceof ValidationError) {
