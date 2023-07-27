@@ -12,13 +12,7 @@ import { CreateUserDto, UpdatePasswordDto } from 'types/types';
 
 export class UserService {
   getUsers() {
-    const users = [...Database.user.findMany()];
-    return users.map((user) => {
-      return {
-        id: user.id,
-        login: user.login,
-      };
-    });
+    return Database.user.findMany();
   }
 
   getUser(userId: string) {

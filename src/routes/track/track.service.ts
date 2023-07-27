@@ -59,9 +59,10 @@ export class TrackService {
 
   handleExceptions(error: any) {
     if (error instanceof DatabaseError || error instanceof ValidationError) {
-      if (error.code === 1 || error.code === 3)
-        throw new BadRequestException(error.message);
-      if (error.code === 2) throw new NotFoundException(error.message);
+      if (error.code === 1)
+        throw new BadRequestException('trackId is invalid (not uuid)');
+      if (error.code === 3) throw new BadRequestException(error.message);
+      if (error.code === 2) throw new NotFoundException('Track was not found');
       if (error.code === 101) throw new ForbiddenException(error.message);
     } else {
       console.log(error);

@@ -74,9 +74,10 @@ export class ArtistService {
 
   handleExceptions(error: any) {
     if (error instanceof DatabaseError || error instanceof ValidationError) {
-      if (error.code === 1 || error.code === 3)
-        throw new BadRequestException(error.message);
-      if (error.code === 2) throw new NotFoundException(error.message);
+      if (error.code === 1)
+        throw new BadRequestException('artistId is invalid (not uuid)');
+      if (error.code === 3) throw new BadRequestException(error.message);
+      if (error.code === 2) throw new NotFoundException('Artist was not found');
       if (error.code === 101) throw new ForbiddenException(error.message);
     } else
       throw new InternalServerErrorException(

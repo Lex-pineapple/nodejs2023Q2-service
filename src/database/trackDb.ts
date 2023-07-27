@@ -22,7 +22,7 @@ export class TrackDb {
       }, 0);
       return retval === filterFields.length ? 1 : 0;
     });
-    if (!foundRecord) throw new DatabaseError(2);
+    if (!foundRecord) throw new DatabaseError(2, 'track');
     return foundRecord;
   }
 

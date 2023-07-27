@@ -38,12 +38,14 @@ export class FavoritesService {
 
   addFav(id: string, category: string) {
     try {
-      Validator.validateUUID(id);
+      Validator.validateUUID(id, category);
       Database[category].findUnique({
         where: { id },
       });
       Database.favorite.addFavorite(id, `${category}s`);
-      return `${category} ID${id} has been added to favorites`;
+      return `${
+        category.charAt(0).toUpperCase() + category.slice(1)
+      } ID${id} has been added to favorites`;
     } catch (error) {
       this.handleExceptions(error);
     }
@@ -51,7 +53,7 @@ export class FavoritesService {
 
   deleteFav(id: string, category: string) {
     try {
-      Validator.validateUUID(id);
+      Validator.validateUUID(id, category);
       const item = Database[category].findUnique({
         where: { id },
       });
@@ -63,10 +65,19 @@ export class FavoritesService {
 
   handleExceptions(error: any) {
     if (error instanceof DatabaseError || error instanceof ValidationError) {
-      if (error.code === 1 || error.code === 3)
-        throw new BadRequestException(error.message);
+      if (error.code === 1)
+        throw new BadRequestException(
+          error.path ? `${error.path}Id is invalid (not uuid)` : error.message,
+        );
+      if (error.code === 3) throw new BadRequestException(error.message);
       if (error.code === 2)
-        throw new UnprocessableEntityException(error.message);
+        throw new UnprocessableEntityException(
+          error.path
+            ? `${
+                error.path.charAt(0).toUpperCase() + error.path.slice(1)
+              } with this id does not exist`
+            : error.message,
+        );
       if (error.code === 101) throw new ForbiddenException(error.message);
       if (error.code === 401) throw new NotFoundException(error.message);
     } else {

@@ -10,11 +10,11 @@ class Validator {
   public static artist: ArtistValidator = new ArtistValidator();
   public static album: AlbumValidator = new AlbumValidator();
 
-  static validateUUID(id: string): true | ValidationError {
+  static validateUUID(id: string, path?: string): true | ValidationError {
     const uuidRegExp =
       /^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$/gi;
     const valid = uuidRegExp.test(id);
-    if (!valid) throw new ValidationError(1);
+    if (!valid) throw new ValidationError(1, path);
     return valid;
   }
 
