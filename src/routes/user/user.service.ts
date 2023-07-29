@@ -3,50 +3,63 @@ import {
   NotFoundException,
   ForbiddenException,
   InternalServerErrorException,
+  Injectable,
 } from '@nestjs/common';
+import { User } from '@prisma/client';
 import Database from 'src/database/shared';
 import DatabaseError from 'src/errors/database.error';
 import { ValidationError } from 'src/errors/validation.error';
+import { PrismaService } from 'src/prisma/prisma.service';
 import Validator from 'src/validator/validator';
 import { CreateUserDto, UpdatePasswordDto } from 'types/types';
 
+@Injectable()
 export class UserService {
+  constructor(private prisma: PrismaService) {}
+
   getUsers() {
-    return Database.user.findMany();
+    return this.prisma.user.findMany();
   }
 
-  getUser(userId: string) {
+  async getUser(userId: string) {
     try {
       Validator.validateUUID(userId);
-      const user = Database.user.findUnique({
-        where: {
-          id: userId,
-        },
+      const user = await this.prisma.user.findUnique({
+        where: { id: userId },
       });
-      return user;
+      return this.excludeField(user, ['password']);
     } catch (error) {
       this.handleExceptions(error);
     }
   }
 
-  createUser(createUserDto: CreateUserDto) {
+  async createUser(createUserDto: CreateUserDto) {
     try {
       Validator.validateDtoFields(createUserDto, Validator.user.schemaCreate);
-      const user = Database.user.create(createUserDto);
-      return user;
+      const user = await this.prisma.user.create({ data: createUserDto });
+      return this.excludeField(user, ['password']);
     } catch (error) {
       this.handleExceptions(error);
     }
   }
 
-  updatePassword(userId: string, updatePasswordDto: UpdatePasswordDto) {
+  async updatePassword(userId: string, updatePasswordDto: UpdatePasswordDto) {
     try {
       Validator.validateUUID(userId);
       Validator.validateDtoFields(
         updatePasswordDto,
         Validator.user.schemaUpdate,
       );
-      return Database.user.update(userId, updatePasswordDto);
+      const user = await this.prisma.user.update({
+        where: { id: userId },
+        data: {
+          password: updatePasswordDto.newPassword,
+          version: {
+            increment: 1,
+          },
+        },
+      });
+      return this.excludeField(user, ['password']);
     } catch (error) {
       this.handleExceptions(error);
     }
@@ -55,10 +68,18 @@ export class UserService {
   deleteUser(userId: string) {
     try {
       Validator.validateUUID(userId);
-      Database.user.delete(userId);
+      return this.prisma.user.delete({
+        where: { id: userId },
+      });
     } catch (error) {
       this.handleExceptions(error);
     }
+  }
+
+  excludeField(user: User, keys: string[]) {
+    return Object.fromEntries(
+      Object.entries(user).filter(([key]) => !keys.includes(key)),
+    );
   }
 
   handleExceptions(error: any) {

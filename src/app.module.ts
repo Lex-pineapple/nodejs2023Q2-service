@@ -7,6 +7,7 @@ import { ArtistModule } from 'src/routes/artist/artist.module';
 import { AlbumModule } from 'src/routes/album/album.module';
 import { FavoritesModule } from 'src/routes/favs/favs.module';
 import { ConfigModule } from '@nestjs/config';
+import { PrismaModule } from './prisma/prisma.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { ConfigModule } from '@nestjs/config';
       envFilePath: '.env',
       isGlobal: true,
     }),
+    PrismaModule,
   ],
   controllers: [AppController],
   providers: [AppService],
