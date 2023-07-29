@@ -6,7 +6,6 @@ import {
   Injectable,
 } from '@nestjs/common';
 import { User } from '@prisma/client';
-import Database from 'src/database/shared';
 import DatabaseError from 'src/errors/database.error';
 import { ValidationError } from 'src/errors/validation.error';
 import { PrismaService } from 'src/prisma/prisma.service';

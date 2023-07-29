@@ -1,5 +1,15 @@
 version: '3.8'
 services:
+  app:
+    build:
+      context: .
+    ports:
+      - 4000:4000
+    depends_on:
+      - postgres
+    env_file:
+      - .env
+
   postgres:
     image: postgres:13.5
     restart: always
@@ -12,6 +22,8 @@ services:
       - postgres:/var/lib/postgresql/data
     ports:
       - '5432:5432'
+    env_file:
+      - .env
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U adminuser -d homelibdb"]
       interval: 1m30s
