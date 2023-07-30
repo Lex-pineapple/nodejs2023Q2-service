@@ -1,4 +1,9 @@
 version: '3.8'
+networks:
+  homelibnetwork:
+    external:
+      name: homelibnetwork
+
 services:
   app:
     build:
@@ -9,6 +14,8 @@ services:
       - postgres
     env_file:
       - .env
+    networks:
+      - homelibnetwork
 
   postgres:
     image: postgres:13.5
@@ -30,6 +37,8 @@ services:
       timeout: 5s
       retries: 5
       start_period: 10s
+    networks:
+      - homelibnetwork
 
 volumes:
   postgres:
