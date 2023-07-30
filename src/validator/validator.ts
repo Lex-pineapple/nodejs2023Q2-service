@@ -27,6 +27,10 @@ class Validator {
         if (schema.required.includes(key)) throw new ValidationError(3);
       });
   }
+
+  static validatePassword(oldPassowrd: string, passwordFromDto: string) {
+    if (oldPassowrd !== passwordFromDto) throw new ValidationError(101);
+  }
 }
 
 export default Validator;

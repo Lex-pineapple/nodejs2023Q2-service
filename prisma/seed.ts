@@ -29,10 +29,10 @@ async function main() {
   await prisma.user.create({ data: TEST_USER });
 }
 
-main()
-  .catch((e) => {
-    console.error(e), process.exit(1);
-  })
-  .finally(async () => {
-    await prisma.$disconnect();
-  });
+// main()
+//   .catch((e) => {
+//     console.error(e), process.exit(1);
+//   })
+//   .finally(async () => {
+//     await prisma.$disconnect();
+//   });
