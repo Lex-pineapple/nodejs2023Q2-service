@@ -4,7 +4,7 @@ WORKDIR /nodejs2023Q2-service
 
 COPY package.json package-lock.json ./
 
-RUN npm install
+RUN npm install && npm cache clean --force
 
 COPY . .
 
