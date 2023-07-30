@@ -20,6 +20,7 @@ export class UserService {
   async getUsers() {
     const users = await this.prisma.user.findMany();
     return users.map((user) => this.formatUser(user));
+    // return 'hehe';
   }
 
   async getUser(userId: string) {

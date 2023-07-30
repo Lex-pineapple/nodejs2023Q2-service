@@ -10,8 +10,9 @@ COPY . .
 
 RUN npx prisma generate
 
-RUN npm run build
+# RUN npm run build
 
 EXPOSE 4000
 
-CMD ["node", "dist/src/main.js"]
+# CMD ["node", "dist/src/main.js"]
+CMD ["npm", "run", "start:dev"]

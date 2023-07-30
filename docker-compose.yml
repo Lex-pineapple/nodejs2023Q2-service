@@ -16,6 +16,8 @@ services:
       - .env
     networks:
       - homelibnetwork
+    volumes:
+      - ./src:/nodejs2023Q2-service/src
 
   postgres:
     image: postgres:13.5
