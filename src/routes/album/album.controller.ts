@@ -9,7 +9,7 @@ import {
   Put,
 } from '@nestjs/common';
 import { AlbumService } from 'src/routes/album/album.service';
-import { CreateAlbumDto, updateAlbumDto } from 'types/types';
+import { CreateAlbumDto, UpdateAlbumDto } from 'types/types';
 
 @Controller('album')
 export class AlbumController {
@@ -32,7 +32,7 @@ export class AlbumController {
   }
 
   @Put(':id')
-  update(@Param('id') id: string, @Body() updateAlbumDto: updateAlbumDto) {
+  update(@Param('id') id: string, @Body() updateAlbumDto: UpdateAlbumDto) {
     return this.AlbumService.updateAlbum(id, updateAlbumDto);
   }
 

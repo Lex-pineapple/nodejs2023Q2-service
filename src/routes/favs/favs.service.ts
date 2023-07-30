@@ -54,7 +54,7 @@ export class FavoritesService {
   deleteFav(id: string, category: string) {
     try {
       Validator.validateUUID(id, category);
-      const item = Database[category].findUnique({
+      Database[category].findUnique({
         where: { id },
       });
       Database.favorite.deleteFavorite(id, `${category}s`);
