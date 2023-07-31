@@ -3,7 +3,7 @@ import {
   Album,
   CreateAlbumDto,
   IFilterOptions,
-  updateAlbumDto,
+  UpdateAlbumDto,
 } from 'types/types';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -51,7 +51,7 @@ export class AlbumDb {
     return newAlbum;
   }
 
-  update(id: string, data: updateAlbumDto) {
+  update(id: string, data: UpdateAlbumDto) {
     const album = this.findUnique({
       where: { id },
     });
