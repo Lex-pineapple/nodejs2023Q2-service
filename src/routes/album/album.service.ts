@@ -8,7 +8,7 @@ import Database from 'src/database/shared';
 import DatabaseError from 'src/errors/database.error';
 import { ValidationError } from 'src/errors/validation.error';
 import Validator from 'src/validator/validator';
-import { CreateAlbumDto, updateAlbumDto } from 'types/types';
+import { CreateAlbumDto, UpdateAlbumDto } from 'types/types';
 
 export class AlbumService {
   getAlbums() {
@@ -37,7 +37,7 @@ export class AlbumService {
     }
   }
 
-  updateAlbum(id: string, updateAlbumDto: updateAlbumDto) {
+  updateAlbum(id: string, updateAlbumDto: UpdateAlbumDto) {
     try {
       Validator.validateUUID(id);
       Validator.validateDtoFields(updateAlbumDto, Validator.album.schema);
