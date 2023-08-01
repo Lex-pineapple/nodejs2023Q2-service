@@ -20,7 +20,6 @@ export class UserService {
   async getUsers() {
     const users = await this.prisma.user.findMany();
     return users.map((user) => this.formatUser(user));
-    // return 'hehe';
   }
 
   async getUser(userId: string) {
@@ -76,10 +75,9 @@ export class UserService {
   async deleteUser(userId: string) {
     try {
       Validator.validateUUID(userId);
-      const user = await this.prisma.user.delete({
+      await this.prisma.user.delete({
         where: { id: userId },
       });
-      return user;
     } catch (error) {
       this.handleExceptions(error);
     }
