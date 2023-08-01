@@ -1,8 +1,7 @@
 version: '3.8'
 networks:
   homelibnetwork:
-    external:
-      name: homelibnetwork
+    driver: bridge
 
 services:
   app:
@@ -17,7 +16,9 @@ services:
     networks:
       - homelibnetwork
     volumes:
-      - ./src:/nodejs2023Q2-service/src
+      - ./:/usr/app
+      - /usr/app/node_modules
+    command: ["npm", "run", "start:dev"]
 
   postgres:
     image: postgres:13.5
