@@ -74,7 +74,7 @@ export interface CreateAlbumDto {
   artistId?: string;
 }
 
-export interface updateAlbumDto {
+export interface UpdateAlbumDto {
   name?: string;
   year?: number;
   artistId?: string;
