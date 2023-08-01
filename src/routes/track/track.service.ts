@@ -5,12 +5,12 @@ import {
   InternalServerErrorException,
   Injectable,
 } from '@nestjs/common';
-import { Prisma } from '@prisma/client';
-// import Database from 'src/database/shared';
+import { Prisma, Track } from '@prisma/client';
 import DatabaseError from 'src/errors/database.error';
 import { prismaErrors } from 'src/errors/errorDb';
 import { ValidationError } from 'src/errors/validation.error';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { excludeField } from 'src/utils/excludeDbField';
 import Validator from 'src/validator/validator';
 import { CreateTrackDto, UpdateTrackDto } from 'types/types';
 
@@ -19,7 +19,8 @@ export class TrackService {
   constructor(private prisma: PrismaService) {}
 
   async getTracks() {
-    return this.prisma.track.findMany();
+    const tracks = await this.prisma.track.findMany();
+    return tracks.map((track) => this.formatTrack(track));
   }
 
   async getTrack(id: string) {
@@ -29,16 +30,21 @@ export class TrackService {
         where: { id },
       });
       if (!track) throw new DatabaseError(202);
-      return track;
+      return this.formatTrack(track);
     } catch (error) {
       this.handleExceptions(error);
     }
   }
 
-  createTrack(createTrackDto: CreateTrackDto) {
+  async createTrack(createTrackDto: CreateTrackDto) {
     try {
       Validator.validateDtoFields(createTrackDto, Validator.track.schema);
-      return this.prisma.track.create({ data: createTrackDto });
+      await this.checkAvailability(
+        createTrackDto.albumId,
+        createTrackDto.artistId,
+      );
+      const track = await this.prisma.track.create({ data: createTrackDto });
+      return this.formatTrack(track);
     } catch (error) {
       this.handleExceptions(error);
     }
@@ -48,25 +54,49 @@ export class TrackService {
     try {
       Validator.validateUUID(id);
       Validator.validateDtoFields(updateTrackDto, Validator.track.schema);
+      await this.checkAvailability(
+        updateTrackDto.albumId,
+        updateTrackDto.artistId,
+      );
       const track = await this.prisma.track.update({
         where: { id },
         data: updateTrackDto,
       });
       if (!track) throw new DatabaseError(202);
-      return track;
+      return this.formatTrack(track);
     } catch (error) {
       this.handleExceptions(error);
     }
   }
 
-  deleteTrack(id: string) {
+  async deleteTrack(id: string) {
     try {
       Validator.validateUUID(id);
       // Database.favorite.deleteFavorite(id, 'tracks');
-      return this.prisma.track.delete({ where: { id } });
+      await this.prisma.track.delete({ where: { id } });
     } catch (error) {
       this.handleExceptions(error);
     }
+  }
+
+  async checkAvailability(albumId: string | null, artistId: string | null) {
+    let albumRecord, artistRecord;
+    if (albumId) {
+      albumRecord = await this.prisma.album.findUnique({
+        where: { id: albumId },
+      });
+      if (!albumRecord) throw new DatabaseError(204);
+    }
+    if (artistId) {
+      artistRecord = await this.prisma.artist.findUnique({
+        where: { id: artistId },
+      });
+      if (!artistRecord) throw new DatabaseError(203);
+    }
+  }
+
+  formatTrack(track: Track) {
+    return excludeField(track, ['isFavorite']);
   }
 
   handleExceptions(error: any) {

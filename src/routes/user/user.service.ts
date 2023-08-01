@@ -10,6 +10,7 @@ import DatabaseError from 'src/errors/database.error';
 import { prismaErrors } from 'src/errors/errorDb';
 import { ValidationError } from 'src/errors/validation.error';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { excludeField } from 'src/utils/excludeDbField';
 import Validator from 'src/validator/validator';
 import { CreateUserDto, UpdatePasswordDto } from 'types/types';
 
@@ -83,14 +84,8 @@ export class UserService {
     }
   }
 
-  excludeField(user: User, keys: string[]) {
-    return Object.fromEntries(
-      Object.entries(user).filter(([key]) => !keys.includes(key)),
-    );
-  }
-
   formatUser(user: User) {
-    const newUser = this.excludeField(user, ['password']);
+    const newUser = excludeField(user, ['password']);
     return {
       ...newUser,
       createdAt: new Date(newUser.createdAt).getTime(),

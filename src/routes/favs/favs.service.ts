@@ -1,85 +1,134 @@
 import {
   BadRequestException,
   NotFoundException,
-  ForbiddenException,
   InternalServerErrorException,
   UnprocessableEntityException,
+  Injectable,
 } from '@nestjs/common';
-import Database from 'src/database/shared';
+import { Prisma } from '@prisma/client';
 import DatabaseError from 'src/errors/database.error';
+import { prismaErrors } from 'src/errors/errorDb';
 import { ValidationError } from 'src/errors/validation.error';
+import { PrismaService } from 'src/prisma/prisma.service';
+import { excludeField } from 'src/utils/excludeDbField';
 import Validator from 'src/validator/validator';
 import { Album, Artist, Track } from 'types/types';
 
+@Injectable()
 export class FavoritesService {
-  keys = {
-    tracks: 'track',
-    artists: 'artist',
-    albums: 'album',
-  };
+  constructor(private prisma: PrismaService) {}
 
-  getFavs() {
+  async addTrack(id: string) {
     try {
-      const favs = { ...Database.favorite.findAll() };
-      for (const key in favs) {
-        const keyIds: Artist[] | Album[] | Track[] = [...favs[key]];
-        const mappedRecords = keyIds.map((id) => {
-          return Database[this.keys[key]].findUnique({
-            where: { id },
-          });
-        });
-        favs[key] = [...mappedRecords];
-      }
-      return favs;
+      Validator.validateUUID(id);
+      const track = await this.prisma.track.update({
+        where: { id },
+        data: { isFavorite: true },
+      });
+      if (!track) throw new DatabaseError(202);
     } catch (error) {
       this.handleExceptions(error);
     }
   }
 
-  addFav(id: string, category: string) {
+  async addAlbum(id: string) {
     try {
-      Validator.validateUUID(id, category);
-      Database[category].findUnique({
+      Validator.validateUUID(id);
+      const album = await this.prisma.album.update({
         where: { id },
+        data: { isFavorite: true },
       });
-      Database.favorite.addFavorite(id, `${category}s`);
-      return `${
-        category.charAt(0).toUpperCase() + category.slice(1)
-      } ID${id} has been added to favorites`;
+      if (!album) throw new DatabaseError(204);
     } catch (error) {
       this.handleExceptions(error);
     }
   }
 
-  deleteFav(id: string, category: string) {
+  async addArtist(id: string) {
     try {
-      Validator.validateUUID(id, category);
-      Database[category].findUnique({
+      Validator.validateUUID(id);
+      const artist = await this.prisma.artist.update({
         where: { id },
+        data: { isFavorite: true },
       });
-      Database.favorite.deleteFavorite(id, `${category}s`);
+      if (!artist) throw new DatabaseError(203);
     } catch (error) {
       this.handleExceptions(error);
     }
+  }
+
+  async removeTrack(id: string) {
+    try {
+      Validator.validateUUID(id);
+      const track = await this.prisma.track.update({
+        where: { id },
+        data: { isFavorite: false },
+      });
+      if (!track) throw new DatabaseError(401);
+    } catch (error) {
+      this.handleExceptions(error);
+    }
+  }
+
+  async removeAlbum(id: string) {
+    try {
+      Validator.validateUUID(id);
+      const album = await this.prisma.album.update({
+        where: { id },
+        data: { isFavorite: false },
+      });
+      if (!album) throw new DatabaseError(401);
+    } catch (error) {
+      this.handleExceptions(error);
+    }
+  }
+
+  async removeArtist(id: string) {
+    try {
+      Validator.validateUUID(id);
+      const artist = await this.prisma.artist.update({
+        where: { id },
+        data: { isFavorite: false },
+      });
+      if (!artist) throw new DatabaseError(401);
+    } catch (error) {
+      this.handleExceptions(error);
+    }
+  }
+
+  async getFavs() {
+    const tracks = await this.prisma.track.findMany({
+      where: { isFavorite: true },
+    });
+    const albums = await this.prisma.album.findMany({
+      where: { isFavorite: true },
+    });
+    const artists = await this.prisma.artist.findMany({
+      where: { isFavorite: true },
+    });
+    return {
+      tracks: this.formatResult(tracks),
+      albums: this.formatResult(albums),
+      artists: this.formatResult(artists),
+    };
+  }
+
+  formatResult(array: Album[] | Track[] | Artist[]) {
+    return array.map((item) => excludeField(item, ['isFavorite']));
   }
 
   handleExceptions(error: any) {
     if (error instanceof DatabaseError || error instanceof ValidationError) {
       if (error.code === 1)
-        throw new BadRequestException(
-          error.path ? `${error.path}Id is invalid (not uuid)` : error.message,
-        );
-      if (error.code === 3) throw new BadRequestException(error.message);
-      if (error.code === 2)
-        throw new UnprocessableEntityException(
-          error.path
-            ? `${
-                error.path.charAt(0).toUpperCase() + error.path.slice(1)
-              } with this id does not exist`
-            : error.message,
-        );
-      if (error.code === 101) throw new ForbiddenException(error.message);
+        throw new BadRequestException('ID is invalid (not uuid)');
+      if (error.code > 200 && error.code < 205)
+        throw new UnprocessableEntityException(error.message);
       if (error.code === 401) throw new NotFoundException(error.message);
+    } else if (
+      error instanceof Prisma.PrismaClientKnownRequestError &&
+      error.code in prismaErrors.user
+    ) {
+      throw new UnprocessableEntityException('The item is not in favorites');
     } else {
       throw new InternalServerErrorException(
         'Whoops... There was a server error!',
