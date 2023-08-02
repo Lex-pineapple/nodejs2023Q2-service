@@ -5,6 +5,7 @@ networks:
 
 services:
   app:
+    image: lexpineapple/nodejs2023q2-service-app
     build:
       context: .
     ports:
