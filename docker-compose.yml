@@ -8,7 +8,7 @@ services:
     build:
       context: .
     ports:
-      - 4000:4000
+      - ${PORT}:${PORT}
     depends_on:
       - postgres
     env_file:
@@ -18,21 +18,21 @@ services:
     volumes:
       - ./:/usr/app
       - /usr/app/node_modules
-    command: ["npm", "run", "start:dev"]
+    command: ["npm", "run", "migrate:start:dev"]
 
   postgres:
     image: postgres:13.5
     restart: always
     environment:
-      - POSTGRES_DB=homelibdb
-      - POSTGRES_USER=adminuser
-      - POSTGRES_PASSWORD=adminpwd
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
       - PGDATA=/var/lib/postgresql/data/pgdata
     command: ["postgres", "-c", "logging_collector=true", "-c", "log_statement=all"]
     volumes:
       - postgres:/var/lib/postgresql/data
     ports:
-      - '5432:5432'
+      - '${DB_PORT}:${DB_PORT}'
     env_file:
       - .env
     healthcheck:

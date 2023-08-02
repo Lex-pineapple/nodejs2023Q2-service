@@ -10,6 +10,7 @@ import DatabaseError from 'src/errors/database.error';
 import { prismaErrors } from 'src/errors/errorDb';
 import { ValidationError } from 'src/errors/validation.error';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { createResponse } from 'src/utils/createResponse';
 import { excludeField } from 'src/utils/excludeDbField';
 import Validator from 'src/validator/validator';
 import { Album, Artist, Track } from 'types/types';
@@ -26,6 +27,7 @@ export class FavoritesService {
         data: { isFavorite: true },
       });
       if (!track) throw new DatabaseError(202);
+      return createResponse('Track has been added to favorites', 201);
     } catch (error) {
       this.handleExceptions(error);
     }
@@ -39,6 +41,7 @@ export class FavoritesService {
         data: { isFavorite: true },
       });
       if (!album) throw new DatabaseError(204);
+      return createResponse('Album has been added to favorites', 201);
     } catch (error) {
       this.handleExceptions(error);
     }
@@ -52,6 +55,7 @@ export class FavoritesService {
         data: { isFavorite: true },
       });
       if (!artist) throw new DatabaseError(203);
+      return createResponse('Artist has been added to favorites', 201);
     } catch (error) {
       this.handleExceptions(error);
     }
