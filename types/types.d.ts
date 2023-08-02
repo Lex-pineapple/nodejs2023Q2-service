@@ -88,3 +88,17 @@ export interface IFilterOptions {
     | Partial<Album>
     | Partial<Favorites>;
 }
+
+export interface ISignupDto {
+  login: string;
+  password: string;
+}
+
+export interface ILoginDto {
+  login: string;
+  password: string;
+}
+
+export interface IRefreshDto {
+  refreshToken: string;
+}
