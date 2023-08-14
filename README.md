@@ -2,14 +2,20 @@
 
 ## Installing and testing the application
 
-1. npm install
-2. npm run lint
-3. npm run start
-4. npm run test
+1. Clone repository
+2. Run `npm install`
+3. For linting run `npm run lint`
+4. Create **.env** file based on .env.example
+5. To start the docker container: `npm run docker:build:up`
+6. To test endpoints run: `npm run test`
 
 PORT value is stored in .env file (should be created based on .env.example file).
 
 You can view OpenAPI documentation on http://localhost:4000/doc/.
+
+## Scanning for vulnerabilities
+
+You can either run `docker:scan` to scan all images, or use `docker:scan:postgres` to scan postgres image and `docker:scan:app` to run the app image.
 
 #### The API has following endpoints:
 
