@@ -9,7 +9,7 @@ import {
 import { JwtService } from '@nestjs/jwt';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { ILoginDto, IRefreshDto, ISignupDto } from 'types/types';
-import * as bcrypt from 'bcrypt';
+import * as bcrypt from 'bcryptjs';
 import { excludeField } from 'src/utils/excludeDbField';
 import Validator from 'src/validator/validator';
 import { Prisma } from '@prisma/client';
@@ -24,7 +24,7 @@ export class AuthService {
   async register(data: ISignupDto) {
     try {
       Validator.validateDtoFields(data, Validator.user.schemaCreate);
-      const user = this.prisma.user.findFirst({
+      const user = await this.prisma.user.findFirst({
         where: { login: data.login },
       });
       if (user) throw new ConflictException('Login already exists');
@@ -36,9 +36,16 @@ export class AuthService {
           password: hashedPassword,
         },
       });
-      return result;
+      const payload = {
+        username: result.login,
+        sub: result.id,
+      };
+      const accessToken = this.jwt.sign(payload);
+      return { ...result, accessToken: accessToken };
       return excludeField(result, ['password']);
     } catch (error) {
+      console.log('error');
+
       console.error(error);
 
       // this.handleExceptions(error);
@@ -46,6 +53,7 @@ export class AuthService {
   }
 
   async login(data: ILoginDto) {
+    Validator.validateDtoFields(data, Validator.user.schemaCreate);
     const user = await this.validateUser(data);
     if (!user) throw new ForbiddenException('Incorrect login or password');
     const payload = {
@@ -53,6 +61,8 @@ export class AuthService {
       sub: user.id,
     };
     return {
+      userId: user.id,
+      login: user.login,
       access_token: this.jwt.sign(payload),
     };
   }

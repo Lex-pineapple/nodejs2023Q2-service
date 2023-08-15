@@ -12,7 +12,6 @@ async function bootstrap() {
   const file = fs.readFileSync(path.join(__dirname, '../doc/api.yaml'), 'utf8');
   const configService = app.get(ConfigService);
   const port = configService.get<number>('PORT');
-
   const docFile = yaml.load(file);
   SwaggerModule.setup('doc', app, docFile as OpenAPIObject);
   await app.listen(port || 4000);

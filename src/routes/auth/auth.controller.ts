@@ -1,4 +1,12 @@
-import { Body, Controller, HttpCode, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  HttpCode,
+  Post,
+  UseGuards,
+  UseInterceptors,
+} from '@nestjs/common';
+import { JwtGuard } from 'src/routes/auth/JwtGuard';
 import { AuthService } from 'src/routes/auth/auth.service';
 import { ILoginDto, IRefreshDto, ISignupDto } from 'types/types';
 
@@ -13,9 +21,10 @@ export class AuthController {
   }
 
   @Post('login')
-  @HttpCode(201)
-  login(@Body() loginDto: ILoginDto) {
-    return this.AuthService.login(loginDto);
+  @HttpCode(200)
+  async login(@Body() loginDto: ILoginDto) {
+    const payload = await this.AuthService.login(loginDto);
+    return payload;
   }
 
   @Post('refresh')
