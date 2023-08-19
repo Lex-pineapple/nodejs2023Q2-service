@@ -1,6 +1,13 @@
-import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
+import {
+  Injectable,
+  CanActivate,
+  ExecutionContext,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { IncomingMessage } from 'http';
+
+const AUTH_PATHS = ['', 'auth', 'doc'];
 
 @Injectable()
 export class JwtGuard implements CanActivate {
@@ -10,12 +17,16 @@ export class JwtGuard implements CanActivate {
       IncomingMessage & { user?: Record<string, unknown> }
     >(context);
     try {
+      const currPath = request.url.split('/')[1];
+      if (AUTH_PATHS.includes(currPath)) return true;
       const token = this.getToken(request);
       const user = this.jwtService.verify(token);
       request.user = user;
       return true;
     } catch (error) {
-      return false;
+      console.log(error);
+
+      throw new UnauthorizedException('Invalid Authorization Header');
     }
   }
 
@@ -26,11 +37,13 @@ export class JwtGuard implements CanActivate {
   protected getToken(request: {
     headers: Record<string, string | string[]>;
   }): string {
-    const authorization = request.headers['authorization'];
+    const authorization =
+      request.headers['authorization'] || request.headers['Authorization'];
     if (!authorization || Array.isArray(authorization)) {
-      throw new Error('Invalid Authorization Header');
+      throw new Error();
     }
-    const [_, token] = authorization.split(' ');
+    const [name, token] = authorization.split(' ');
+    if (name !== 'Bearer') throw new Error();
     return token;
   }
 }

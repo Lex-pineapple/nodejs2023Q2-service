@@ -1,15 +1,9 @@
-import {
-  Body,
-  Controller,
-  HttpCode,
-  Post,
-  UseGuards,
-  UseInterceptors,
-} from '@nestjs/common';
+import { Body, Controller, HttpCode, Post, UseGuards } from '@nestjs/common';
 import { JwtGuard } from 'src/routes/auth/JwtGuard';
 import { AuthService } from 'src/routes/auth/auth.service';
 import { ILoginDto, IRefreshDto, ISignupDto } from 'types/types';
 
+@UseGuards(JwtGuard)
 @Controller('auth')
 export class AuthController {
   constructor(private readonly AuthService: AuthService) {}
@@ -28,7 +22,7 @@ export class AuthController {
   }
 
   @Post('refresh')
-  @HttpCode(201)
+  @HttpCode(200)
   refresh(@Body() refreshDto: IRefreshDto) {
     return this.AuthService.refresh(refreshDto);
   }

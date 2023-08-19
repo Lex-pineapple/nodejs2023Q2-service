@@ -5,6 +5,7 @@ import {
   Injectable,
   InternalServerErrorException,
   NotFoundException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { PrismaService } from 'src/prisma/prisma.service';
@@ -27,7 +28,7 @@ export class AuthService {
       const user = await this.prisma.user.findFirst({
         where: { login: data.login },
       });
-      if (user) throw new ConflictException('Login already exists');
+      if (user) return excludeField(user, ['password']);
       const salt = parseInt(process.env.CRYPT_SALT);
       const hashedPassword = await bcrypt.hash(data.password, salt);
       const result = await this.prisma.user.create({
@@ -36,19 +37,11 @@ export class AuthService {
           password: hashedPassword,
         },
       });
-      const payload = {
-        username: result.login,
-        sub: result.id,
-      };
-      const accessToken = this.jwt.sign(payload);
-      return { ...result, accessToken: accessToken };
       return excludeField(result, ['password']);
     } catch (error) {
-      console.log('error');
-
-      console.error(error);
-
-      // this.handleExceptions(error);
+      // console.log('error');
+      // console.error(error);
+      this.handleExceptions(error);
     }
   }
 
@@ -63,11 +56,44 @@ export class AuthService {
     return {
       userId: user.id,
       login: user.login,
-      access_token: this.jwt.sign(payload),
+      accessToken: this.jwt.sign(payload),
+      refreshToken: this.jwt.sign(payload, {
+        secret: process.env.JWT_SECRET_REFRESH_KEY,
+        expiresIn: process.env.TOKEN_REFRESH_EXPIRE_TIME,
+      }),
     };
   }
 
-  async refresh(refreshDto: IRefreshDto) {}
+  async refresh(refreshDto: IRefreshDto) {
+    if (!refreshDto.refreshToken)
+      throw new UnauthorizedException('No refreshToken in request body');
+    try {
+      const refreshData = this.jwt.verify(refreshDto.refreshToken, {
+        secret: process.env.JWT_SECRET_REFRESH_KEY,
+      });
+      const user = await this.prisma.user.findUnique({
+        where: { id: refreshData.sub },
+      });
+      if (!user) throw new Error();
+      const payload = {
+        username: user.login,
+        sub: user.id,
+      };
+      return {
+        userId: user.id,
+        login: user.login,
+        accessToken: this.jwt.sign(payload),
+        refreshToken: this.jwt.sign(payload, {
+          secret: process.env.JWT_SECRET_REFRESH_KEY,
+          expiresIn: process.env.TOKEN_REFRESH_EXPIRE_TIME,
+        }),
+      };
+    } catch (error) {
+      throw new ForbiddenException(
+        'Authentication failed (Refresh token is invalid or expired',
+      );
+    }
+  }
 
   async validateUser(data: ILoginDto) {
     const user = await this.prisma.user.findFirst({
@@ -87,6 +113,8 @@ export class AuthService {
         throw new NotFoundException(error.message);
       if (error.code === 101) throw new ForbiddenException(error.message);
       if (error.code === 3) throw new BadRequestException(error.message);
+      if (error.code === 401)
+        throw new ConflictException('Login already exists');
     } else if (
       error instanceof Prisma.PrismaClientKnownRequestError &&
       error.code in prismaErrors.user

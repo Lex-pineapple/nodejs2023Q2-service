@@ -2,6 +2,7 @@ const validationErrors = {
   1: 'UUID is invalid',
   3: 'Body does not contain required fields',
   101: 'oldPassowrd is wrong',
+  401: 'Login already exists',
 };
 
 const databaseErrors = {
