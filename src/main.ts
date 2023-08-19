@@ -5,9 +5,12 @@ import * as yaml from 'js-yaml';
 import * as fs from 'node:fs';
 import * as path from 'node:path';
 import { ConfigService } from '@nestjs/config';
+import { LoggingService } from 'src/log/log.service';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, {
+    logger: new LoggingService(),
+  });
 
   const file = fs.readFileSync(path.join(__dirname, '../doc/api.yaml'), 'utf8');
   const configService = app.get(ConfigService);
