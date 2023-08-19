@@ -14,9 +14,13 @@ export class AuthController {
 
   @Post('login')
   @HttpCode(201)
-  login(@Body() loginDto: ILoginDto) {}
+  login(@Body() loginDto: ILoginDto) {
+    return this.AuthService.login(loginDto);
+  }
 
   @Post('refresh')
   @HttpCode(201)
-  refresh(@Body() refreshDto: IRefreshDto) {}
+  refresh(@Body() refreshDto: IRefreshDto) {
+    return this.AuthService.refresh(refreshDto);
+  }
 }
