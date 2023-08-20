@@ -75,8 +75,9 @@ export class AuthService {
         secret: process.env.JWT_SECRET_REFRESH_KEY,
       });
       const user = await this.prisma.user.findUnique({
-        where: { id: refreshData.sub },
+        where: { id: refreshData.userId },
       });
+
       if (!user) throw new Error();
       const payload = {
         userId: user.id,
