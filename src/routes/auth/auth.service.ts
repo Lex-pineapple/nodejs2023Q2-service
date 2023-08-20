@@ -29,6 +29,7 @@ export class AuthService {
         where: { login: data.login },
       });
       if (user) return excludeField(user, ['password']);
+
       const salt = parseInt(process.env.CRYPT_SALT);
       const hashedPassword = await bcrypt.hash(data.password, salt);
       const result = await this.prisma.user.create({
@@ -39,8 +40,6 @@ export class AuthService {
       });
       return excludeField(result, ['password']);
     } catch (error) {
-      // console.log('error');
-      // console.error(error);
       this.handleExceptions(error);
     }
   }

@@ -13,12 +13,13 @@ async function bootstrap() {
   });
 
   const logger = app.get(LoggingService);
+  app.useLogger(logger);
   process.on('uncaughtException', (err, origin) => {
-    logger.error(err.message);
+    logger.error(`Caught Exception - ${err.message}`);
     process.exit(1);
   });
   process.on('unhandledRejection', (reason, promise) => {
-    logger.warn(reason);
+    logger.warn(`Rejection at promise - ${reason}`);
   });
 
   const file = fs.readFileSync(path.join(__dirname, '../doc/api.yaml'), 'utf8');

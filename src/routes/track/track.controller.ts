@@ -7,13 +7,10 @@ import {
   Param,
   Post,
   Put,
-  UseGuards,
 } from '@nestjs/common';
 import TrackService from './track.service';
 import { CreateTrackDto, UpdateTrackDto } from 'types/types';
-import { JwtGuard } from 'src/routes/auth/JwtGuard';
 
-@UseGuards(JwtGuard)
 @Controller('track')
 export class TrackController {
   constructor(private readonly TrackService: TrackService) {}

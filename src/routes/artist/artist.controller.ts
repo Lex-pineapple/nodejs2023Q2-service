@@ -7,13 +7,10 @@ import {
   Param,
   Post,
   Put,
-  UseGuards,
 } from '@nestjs/common';
 import { ArtistService } from 'src/routes/artist/artist.service';
-import { JwtGuard } from 'src/routes/auth/JwtGuard';
 import { CreateArtistDto, UpdateArtistDto } from 'types/types';
 
-@UseGuards(JwtGuard)
 @Controller('artist')
 export class ArtistController {
   constructor(private readonly ArtistService: ArtistService) {}

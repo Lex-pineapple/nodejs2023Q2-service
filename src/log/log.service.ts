@@ -1,5 +1,5 @@
 import { Injectable, LoggerService } from '@nestjs/common';
-import { appendFileSync, statSync } from 'fs';
+import { appendFileSync } from 'fs';
 import * as path from 'path';
 import * as fs from 'fs';
 
@@ -19,24 +19,23 @@ export class LoggingService implements LoggerService {
     this.level = parseInt(process.env.LOG_LEVEL) || 2;
   }
 
-  log(message: any, ...optionalParams: any[]) {
+  log(message: any, ..._optionalParams: any[]) {
     return this.changeLevelAndWrite(2, message);
-    // appendFileSync(filename, message);
   }
 
-  error(message: any, ...optionalParams: any[]) {
+  error(message: any, ..._optionalParams: any[]) {
     return this.changeLevelAndWrite(0, message);
   }
 
-  warn(message: any, ...optionalParams: any[]) {
+  warn(message: any, ..._optionalParams: any[]) {
     return this.changeLevelAndWrite(1, message);
   }
 
-  debug(message: any, ...optionalParams: any[]) {
+  debug(message: any, ..._optionalParams: any[]) {
     return this.changeLevelAndWrite(3, message);
   }
 
-  verbose(message: any, ...optionalParams: any[]) {
+  verbose(message: any, ..._optionalParams: any[]) {
     return this.changeLevelAndWrite(4, message);
   }
 
