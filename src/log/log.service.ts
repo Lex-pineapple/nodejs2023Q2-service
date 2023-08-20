@@ -46,7 +46,6 @@ export class LoggingService implements LoggerService {
     }: ${new Date().toISOString()} - ${message}`;
     process.stdout.write(logMessage);
     const pathToFolder = path.join(__dirname, '..', '..', '..', 'logs');
-    console.log('pathToFolder', pathToFolder);
     if (!fs.existsSync(pathToFolder))
       fs.mkdirSync(pathToFolder, { recursive: true });
     const filename = path.resolve(
