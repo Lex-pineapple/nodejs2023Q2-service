@@ -2,14 +2,20 @@
 
 ## Installing and testing the application
 
-1. npm install
-2. npm run lint
-3. npm run start
-4. npm run test
+1. Clone repository
+2. Run `npm install`
+3. For linting run `npm run lint`
+4. Create **.env** file based on .env.example
+5. To start the docker container: `npm run docker:build:up`
+6. To test authorization run: `npm run test:auth`
 
 PORT value is stored in .env file (should be created based on .env.example file).
 
 You can view OpenAPI documentation on http://localhost:4000/doc/.
+
+## Scanning for vulnerabilities
+
+You can either run `docker:scan` to scan all images, or use `docker:scan:postgres` to scan postgres image and `docker:scan:app` to run the app image.
 
 #### The API has following endpoints:
 
@@ -45,3 +51,9 @@ You can view OpenAPI documentation on http://localhost:4000/doc/.
   - **DELETE** /favs/album/:id - delete album from favorites
   - **POST** /favs/artist/:id - add artist to the favorites
   - **DELETE** /favs/artist/:id - delete artist from favorites
+- `Signup` (`auth/signup` route)
+  - **POST** auth/signup - send `login` and `password` to create a new `user`
+- `Login` (`auth/login` route)
+  - **POST** auth/login - send `login` and `password` to get Access token and Refresh token (optionally)
+- `Refresh` (`auth/refresh` route)
+  - **POST** auth/refresh - send refresh token in body as `{ refreshToken }` to get new pair of Access token and Refresh token
