@@ -3,6 +3,7 @@ const validationErrors = {
   3: 'Body does not contain required fields',
   101: 'oldPassowrd is wrong',
   401: 'Login already exists',
+  402: 'Incorrect login or password',
 };
 
 const databaseErrors = {

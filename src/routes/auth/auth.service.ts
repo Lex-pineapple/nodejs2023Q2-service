@@ -45,22 +45,26 @@ export class AuthService {
   }
 
   async login(data: ILoginDto) {
-    Validator.validateDtoFields(data, Validator.user.schemaCreate);
-    const user = await this.validateUser(data);
-    if (!user) throw new ForbiddenException('Incorrect login or password');
-    const payload = {
-      userId: user.id,
-      login: user.login,
-    };
-    return {
-      userId: user.id,
-      login: user.login,
-      accessToken: this.jwt.sign(payload),
-      refreshToken: this.jwt.sign(payload, {
-        secret: process.env.JWT_SECRET_REFRESH_KEY,
-        expiresIn: process.env.TOKEN_REFRESH_EXPIRE_TIME,
-      }),
-    };
+    try {
+      Validator.validateDtoFields(data, Validator.user.schemaCreate);
+      const user = await this.validateUser(data);
+      if (!user) throw new ValidationError(402);
+      const payload = {
+        userId: user.id,
+        login: user.login,
+      };
+      return {
+        userId: user.id,
+        login: user.login,
+        accessToken: this.jwt.sign(payload),
+        refreshToken: this.jwt.sign(payload, {
+          secret: process.env.JWT_SECRET_REFRESH_KEY,
+          expiresIn: process.env.TOKEN_REFRESH_EXPIRE_TIME,
+        }),
+      };
+    } catch (error) {
+      this.handleExceptions(error);
+    }
   }
 
   async refresh(refreshDto: IRefreshDto) {
@@ -89,7 +93,7 @@ export class AuthService {
       };
     } catch (error) {
       throw new ForbiddenException(
-        'Authentication failed (Refresh token is invalid or expired',
+        'Authentication failed (Refresh token is invalid or expired)',
       );
     }
   }
@@ -114,6 +118,8 @@ export class AuthService {
       if (error.code === 3) throw new BadRequestException(error.message);
       if (error.code === 401)
         throw new ConflictException('Login already exists');
+      if (error.code === 402)
+        throw new ForbiddenException('Incorrect login or password');
     } else if (
       error instanceof Prisma.PrismaClientKnownRequestError &&
       error.code in prismaErrors.user
