@@ -13,6 +13,7 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { excludeField } from 'src/utils/excludeDbField';
 import Validator from 'src/validator/validator';
 import { CreateUserDto, UpdatePasswordDto } from 'types/types';
+import * as bcrypt from 'bcryptjs';
 
 @Injectable()
 export class UserService {
@@ -39,7 +40,14 @@ export class UserService {
   async createUser(createUserDto: CreateUserDto) {
     try {
       Validator.validateDtoFields(createUserDto, Validator.user.schemaCreate);
-      const user = await this.prisma.user.create({ data: createUserDto });
+      const salt = parseInt(process.env.CRYPT_SALT) || 10;
+      const hashedPassword = await bcrypt.hash(createUserDto.password, salt);
+      const user = await this.prisma.user.create({
+        data: {
+          login: createUserDto.login,
+          password: hashedPassword,
+        },
+      });
       return this.formatUser(user);
     } catch (error) {
       this.handleExceptions(error);
@@ -57,11 +65,20 @@ export class UserService {
         where: { id: userId },
       });
       if (!user) throw new DatabaseError(201);
-      Validator.validatePassword(user.password, updatePasswordDto.oldPassword);
+      const passwordValid = await bcrypt.compare(
+        updatePasswordDto.oldPassword,
+        user.password,
+      );
+      if (!passwordValid) throw new ValidationError(101);
+      const salt = parseInt(process.env.CRYPT_SALT) || 10;
+      const hashedPassword = await bcrypt.hash(
+        updatePasswordDto.newPassword,
+        salt,
+      );
       const updUser = await this.prisma.user.update({
         where: { id: userId },
         data: {
-          password: updatePasswordDto.newPassword,
+          password: hashedPassword,
           version: {
             increment: 1,
           },

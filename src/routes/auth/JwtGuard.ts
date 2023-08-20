@@ -24,8 +24,6 @@ export class JwtGuard implements CanActivate {
       request.user = user;
       return true;
     } catch (error) {
-      console.log(error);
-
       throw new UnauthorizedException('Invalid Authorization Header');
     }
   }

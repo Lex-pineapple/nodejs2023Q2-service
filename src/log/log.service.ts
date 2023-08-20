@@ -48,7 +48,7 @@ export class LoggingService implements LoggerService {
     const pathToFolder = path.join(__dirname, '..', '..', '..', 'logs');
     if (!fs.existsSync(pathToFolder))
       fs.mkdirSync(pathToFolder, { recursive: true });
-    const filename = path.resolve(
+    const logFilename = path.resolve(
       __dirname,
       '..',
       '..',
@@ -56,21 +56,60 @@ export class LoggingService implements LoggerService {
       'logs',
       'temp.log',
     );
+    let errorLogFilename;
+    if (logLevels[level] === 'error') {
+      errorLogFilename = path.resolve(
+        __dirname,
+        '..',
+        '..',
+        '..',
+        'logs',
+        'error-temp.log',
+      );
+    }
 
     try {
-      const stats = fs.statSync(filename);
+      const stats = fs.statSync(logFilename);
       const sizeInBytes = stats.size;
+      if (errorLogFilename) {
+        const errorLogStats = fs.statSync(errorLogFilename);
+        const errorLogSizeInBytes = errorLogStats.size;
+        if (
+          errorLogSizeInBytes >=
+          (parseInt(process.env.LOG_SIZE) || 10) * 1000
+        ) {
+          fs.renameSync(
+            errorLogFilename,
+            path.resolve(
+              __dirname,
+              '..',
+              '..',
+              '..',
+              'logs',
+              `error-log-${Date.now()}.log`,
+            ),
+          );
+        }
+      }
 
       if (sizeInBytes >= (parseInt(process.env.LOG_SIZE) || 10) * 1000) {
         fs.renameSync(
-          filename,
-          path.resolve(__dirname, 'logs', `log-${Date.now()}.log`),
+          logFilename,
+          path.resolve(
+            __dirname,
+            '..',
+            '..',
+            '..',
+            'logs',
+            `log-${Date.now()}.log`,
+          ),
         );
       }
     } catch (error) {
-      console.error(error);
+      // console.error(error);
     }
-    appendFileSync(filename, logMessage + '\n');
+    appendFileSync(logFilename, logMessage + '\n');
+    if (errorLogFilename) appendFileSync(errorLogFilename, logMessage + '\n');
     return true;
   }
 }

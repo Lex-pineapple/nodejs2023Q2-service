@@ -49,8 +49,8 @@ export class AuthService {
     const user = await this.validateUser(data);
     if (!user) throw new ForbiddenException('Incorrect login or password');
     const payload = {
-      username: user.login,
-      sub: user.id,
+      userId: user.id,
+      login: user.login,
     };
     return {
       userId: user.id,
@@ -75,8 +75,8 @@ export class AuthService {
       });
       if (!user) throw new Error();
       const payload = {
-        username: user.login,
-        sub: user.id,
+        userId: user.id,
+        login: user.login,
       };
       return {
         userId: user.id,
