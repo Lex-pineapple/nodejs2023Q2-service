@@ -45,10 +45,19 @@ export class LoggingService implements LoggerService {
       logLevels[level]
     }: ${new Date().toISOString()} - ${message}`;
     process.stdout.write(logMessage);
-    const pathToFolder = path.join(__dirname, 'logs');
+    const pathToFolder = path.join(__dirname, '..', '..', '..', 'logs');
+    console.log('pathToFolder', pathToFolder);
     if (!fs.existsSync(pathToFolder))
       fs.mkdirSync(pathToFolder, { recursive: true });
-    const filename = path.resolve(__dirname, 'logs', 'temp.log');
+    const filename = path.resolve(
+      __dirname,
+      '..',
+      '..',
+      '..',
+      'logs',
+      'temp.log',
+    );
+
     try {
       const stats = fs.statSync(filename);
       const sizeInBytes = stats.size;
