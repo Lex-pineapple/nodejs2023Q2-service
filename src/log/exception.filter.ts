@@ -27,10 +27,11 @@ export class HttpExceptionFilter implements ExceptionFilter {
 
     const responseBody = {
       statusCode: status,
+      message: exception.message,
       timestamp: new Date().toISOString(),
-      path: httpAdapter.getRequestUrl(ctx.getRequest()),
+      path: httpAdapter.getRequestUrl(req),
     };
 
-    httpAdapter.reply(ctx.getResponse(), responseBody, status);
+    httpAdapter.reply(res, responseBody, status);
   }
 }
