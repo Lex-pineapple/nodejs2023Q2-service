@@ -12,6 +12,15 @@ async function bootstrap() {
     logger: new LoggingService(),
   });
 
+  const logger = app.get(LoggingService);
+  process.on('uncaughtException', (err, origin) => {
+    logger.error(err.message);
+    process.exit(1);
+  });
+  process.on('unhandledRejection', (reason, promise) => {
+    logger.warn(reason);
+  });
+
   const file = fs.readFileSync(path.join(__dirname, '../doc/api.yaml'), 'utf8');
   const configService = app.get(ConfigService);
   const port = configService.get<number>('PORT');

@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { AppController } from 'src/app.controller';
 import { AppService } from 'src/app.service';
 import { UserModule } from './routes/user/user.module';
@@ -10,6 +10,7 @@ import { ConfigModule } from '@nestjs/config';
 import { PrismaModule } from './prisma/prisma.module';
 import { AuthModule } from 'src/routes/auth/auth.module';
 import { LoggingModule } from 'src/log/log.module';
+import { LoggerMiddleware } from 'src/log/log.middleware';
 
 @Module({
   imports: [
@@ -29,4 +30,8 @@ import { LoggingModule } from 'src/log/log.module';
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(LoggerMiddleware).forRoutes('*');
+  }
+}
