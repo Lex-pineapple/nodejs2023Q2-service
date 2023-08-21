@@ -13,10 +13,6 @@ PORT value is stored in .env file (should be created based on .env.example file)
 
 You can view OpenAPI documentation on http://localhost:4000/doc/.
 
-## Scanning for vulnerabilities
-
-You can either run `docker:scan` to scan all images, or use `docker:scan:postgres` to scan postgres image and `docker:scan:app` to run the app image.
-
 #### The API has following endpoints:
 
 - `/user`
